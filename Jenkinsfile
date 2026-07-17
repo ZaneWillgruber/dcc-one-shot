@@ -1,33 +1,53 @@
 pipeline {
-    agent {
-        dockerfile {
-            filename 'Dockerfile.ci'
-        }
-    }
+    agent none
 
     environment {
         APP_NAME = 'dcc-one-shot'
     }
 
     stages {
-        stage('Install') {
-            steps {
-                sh 'corepack enable && pnpm install --frozen-lockfile'
+        stage('CI') {
+            agent {
+                dockerfile {
+                    filename 'Dockerfile.ci'
+                }
+            }
+            stages {
+                stage('Install') {
+                    steps {
+                        sh 'pnpm install --frozen-lockfile'
+                    }
+                }
+
+                stage('Lint & Type Check') {
+                    parallel {
+                        stage('Lint') {
+                            steps {
+                                sh 'pnpm lint'
+                            }
+                        }
+                        stage('Type Check') {
+                            steps {
+                                sh 'pnpm exec tsc --noEmit'
+                            }
+                        }
+                    }
+                }
             }
         }
 
-        stage('Lint & Type Check') {
-            parallel {
-                stage('Lint') {
-                    steps {
-                        sh 'pnpm lint'
-                    }
+        stage('Docker Build Check') {
+            when {
+                changeRequest()
+            }
+            agent {
+                docker {
+                    image 'docker:27-cli'
+                    args '-v /var/run/docker.sock:/var/run/docker.sock'
                 }
-                stage('Type Check') {
-                    steps {
-                        sh 'pnpm exec tsc --noEmit'
-                    }
-                }
+            }
+            steps {
+                sh 'docker build -t dcc-one-shot-pr-check --pull .'
             }
         }
 
@@ -42,7 +62,6 @@ pipeline {
                 docker {
                     image 'docker:27-cli'
                     args '-v /var/run/docker.sock:/var/run/docker.sock'
-                    reuseNode true
                 }
             }
             environment {
@@ -56,17 +75,17 @@ pipeline {
                     docker compose -f "$COMPOSE_FILE" --env-file .env up -d db
                     docker compose -f "$COMPOSE_FILE" --env-file .env --profile migrate run --rm migrate
                     docker compose -f "$COMPOSE_FILE" --env-file .env up -d --remove-orphans
-                    rm -f .env
                 '''
+            }
+            post {
+                always {
+                    sh 'rm -f .env'
+                }
             }
         }
     }
 
     post {
-        always {
-            sh 'rm -f .env'
-            cleanWs()
-        }
         failure {
             echo "Pipeline failed on branch ${env.BRANCH_NAME}"
         }
