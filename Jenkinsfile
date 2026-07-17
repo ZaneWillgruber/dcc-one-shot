@@ -10,6 +10,7 @@ pipeline {
             agent {
                 dockerfile {
                     filename 'Dockerfile.ci'
+                    args '--entrypoint=""'
                 }
             }
             stages {
@@ -43,7 +44,7 @@ pipeline {
             agent {
                 docker {
                     image 'docker:27-cli'
-                    args '-v /var/run/docker.sock:/var/run/docker.sock'
+                    args '--user root:root --entrypoint="" -v /var/run/docker.sock:/var/run/docker.sock -e HOME=/tmp'
                 }
             }
             steps {
@@ -53,6 +54,7 @@ pipeline {
 
         stage('Build & Deploy') {
             when {
+                beforeAgent true
                 anyOf {
                     branch 'main'
                     branch 'develop'
@@ -61,7 +63,7 @@ pipeline {
             agent {
                 docker {
                     image 'docker:27-cli'
-                    args '-v /var/run/docker.sock:/var/run/docker.sock'
+                    args '--user root:root --entrypoint="" -v /var/run/docker.sock:/var/run/docker.sock -e HOME=/tmp'
                 }
             }
             environment {
