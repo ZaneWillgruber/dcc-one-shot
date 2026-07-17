@@ -3,14 +3,21 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
     depends_on:
       db:
         condition: service_healthy
     restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dcc.rule=Host(`${TRAEFIK_HOST}`)"
+      - "traefik.http.routers.dcc.entrypoints=websecure"
+      - "traefik.http.routers.dcc.tls=true"
+      - "traefik.http.services.dcc.loadbalancer.server.port=3000"
+    networks:
+      - traefik
+      - default
 
   migrate:
     build:
@@ -41,3 +48,8 @@ services:
 
 volumes:
   postgres_data:
+
+networks:
+  traefik:
+    external: true
+  default:
