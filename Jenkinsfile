@@ -10,6 +10,7 @@ pipeline {
             agent {
                 dockerfile {
                     filename 'Dockerfile.ci'
+                    args '--entrypoint=""'
                 }
             }
             stages {
@@ -53,6 +54,7 @@ pipeline {
 
         stage('Build & Deploy') {
             when {
+                beforeAgent true
                 anyOf {
                     branch 'main'
                     branch 'develop'
