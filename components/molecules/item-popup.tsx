@@ -17,7 +17,7 @@ export function ItemPopup() {
 		removeFromHotList,
 		enterSwapMode,
 		enterReplaceMode,
-		useItem,
+		consumeItem,
 	} = usePlayerContext();
 
 	if (!popupItem) return null;
@@ -51,7 +51,7 @@ export function ItemPopup() {
 
 	function handleUse() {
 		if (!popupItem) return;
-		useItem(popupItem.name);
+		consumeItem(popupItem.name);
 		closePopup();
 	}
 
