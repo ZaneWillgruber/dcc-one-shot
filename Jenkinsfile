@@ -1,6 +1,8 @@
 pipeline {
     agent {
-        docker { image 'node:22-alpine' }
+        dockerfile {
+            filename 'Dockerfile.ci'
+        }
     }
 
     environment {
