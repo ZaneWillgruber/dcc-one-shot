@@ -17,6 +17,7 @@ services:
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
+      - "traefik.docker.network=traefik"
       - "traefik.http.routers.dcc.rule=Host(`${TRAEFIK_HOST}`)"
       - "traefik.http.routers.dcc.entrypoints=websecure"
       - "traefik.http.routers.dcc.tls=true"
