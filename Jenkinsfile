@@ -1,5 +1,7 @@
 pipeline {
-    agent any
+    agent {
+        docker { image 'node:22-alpine' }
+    }
 
     environment {
         APP_NAME = 'dcc-one-shot'
@@ -32,6 +34,13 @@ pipeline {
                 anyOf {
                     branch 'main'
                     branch 'develop'
+                }
+            }
+            agent {
+                docker {
+                    image 'docker:27-cli'
+                    args '-v /var/run/docker.sock:/var/run/docker.sock'
+                    reuseNode true
                 }
             }
             environment {
