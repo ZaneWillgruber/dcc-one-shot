@@ -3,6 +3,8 @@ import { AbilityType } from './ability';
 export interface Player {
 	name: string;
 	race: string;
+	class?: string;
+	image?: string;
 	level: number;
 	crawlerNumber: number;
 	floor: number;

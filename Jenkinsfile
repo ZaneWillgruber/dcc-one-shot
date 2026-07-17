@@ -41,7 +41,9 @@ pipeline {
             steps {
                 sh '''
                     cp "$ENV_FILE_CRED" .env
-                    docker compose -f "$COMPOSE_FILE" --env-file .env build --pull
+                    docker compose -f "$COMPOSE_FILE" --profile migrate --env-file .env build --pull
+                    docker compose -f "$COMPOSE_FILE" --env-file .env up -d db
+                    docker compose -f "$COMPOSE_FILE" --env-file .env --profile migrate run --rm migrate
                     docker compose -f "$COMPOSE_FILE" --env-file .env up -d --remove-orphans
                     rm -f .env
                 '''

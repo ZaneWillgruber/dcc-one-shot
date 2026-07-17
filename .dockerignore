@@ -1,10 +1,6 @@
-.git
-.gitignore
-.env*
+.env
+.env.*
 !.env.example
-node_modules
+.git
 .next
-README.md
-Dockerfile*
-docker-compose*
-Jenkinsfile
+node_modules

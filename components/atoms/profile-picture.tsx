@@ -2,7 +2,7 @@ import Image from 'next/image';
 import { Display } from './display';
 
 interface ProfilePictureProps {
-	src: string;
+	src?: string;
 	alt?: string;
 }
 
