@@ -39,7 +39,7 @@ export function PlayerInfoCard({ player }: { player: Player }) {
 							</div>
 						</div>
 					</Row>
-					<PlayerLevel level={player.level} />
+					<PlayerLevel />
 				</div>
 			</div>
 		</Card>

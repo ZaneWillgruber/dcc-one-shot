@@ -18,7 +18,7 @@ interface PlayerContextValue {
 	mana: Pool;
 	// mutable inventory
 	inventory: InventoryItem[];
-	useItem: (name: string) => void;
+	consumeItem: (name: string) => void;
 	// hotlist
 	hotList: (HotListItem | null)[];
 	addToHotList: (item: HotListItem) => void;
@@ -90,7 +90,7 @@ export function PlayerProvider({
 		}
 	}
 
-	function useItem(name: string) {
+	function consumeItem(name: string) {
 		const item = inventory.find((i) => i.name === name);
 		if (!item?.usable) return;
 
@@ -145,7 +145,7 @@ export function PlayerProvider({
 		<PlayerContext.Provider value={{
 			player,
 			health, mana,
-			inventory, useItem,
+			inventory, consumeItem,
 			hotList, addToHotList, removeFromHotList, replaceInHotList, swapHotList,
 			popupItem, openPopup, closePopup,
 			swapTargetIndex, enterSwapMode, exitSwapMode,

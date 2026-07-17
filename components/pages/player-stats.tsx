@@ -48,7 +48,7 @@ export default function PlayerStats() {
 							damageReduction={calculateDamageReduction(player)}
 						/>
 						<Hotlist />
-						<PlayerTabs player={player} />
+						<PlayerTabs />
 					</div>
 				</div>
 			</div>

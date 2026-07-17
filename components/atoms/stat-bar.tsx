@@ -2,7 +2,6 @@ import { Color } from '@/types/ui';
 import { Row } from './row';
 import { Stack } from './stack';
 import { ProgressBar } from './progress-bar';
-import { Label } from './label';
 import { Text } from './text';
 
 interface StatBarProps {

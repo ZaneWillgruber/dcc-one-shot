@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { InventoryItem, Player } from '@/types/player-types';
+import { InventoryItem } from '@/types/player-types';
 import { usePlayerContext } from '@/contexts/player-context';
 import { Text } from '../atoms/text';
 import { Label } from '../atoms/label';
@@ -15,7 +15,7 @@ const CATEGORY_TABS = [
 	'Treasure',
 ];
 
-export function Inventory({ player: _player }: { player: Player }) {
+export function Inventory() {
 	const { inventory, openPopup } = usePlayerContext();
 	const [activeCategory, setActiveCategory] = useState('All');
 

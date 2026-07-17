@@ -1,4 +1,3 @@
-import { Player } from '@/types/player-types';
 import { Card } from '../atoms/card';
 import { Text } from '../atoms/text';
 import { useState } from 'react';
@@ -11,9 +10,9 @@ interface TabDetail {
 	active?: boolean;
 }
 
-export default function PlayerTabs({ player }: { player: Player }) {
+export default function PlayerTabs() {
 	const tabs: TabDetail[] = [
-		{ title: 'Inventory', content: <Inventory player={player} /> },
+		{ title: 'Inventory', content: <Inventory /> },
 		{ title: 'Stats' },
 		{ title: 'Quests' },
 		{ title: 'Map' },
