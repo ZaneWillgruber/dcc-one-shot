@@ -36,9 +36,6 @@
 		"tsx": "^4.23.1",
 		"typescript": "^5"
 	},
-	"pnpm": {
-		"onlyBuiltDependencies": ["esbuild"]
-	},
 	"prettier": {
 		"semi": true,
 		"singleQuote": true,
