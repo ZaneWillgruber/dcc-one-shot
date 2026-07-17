@@ -1,6 +1,7 @@
 packages:
   - .
 
-neverBuiltDependencies:
+onlyBuiltDependencies:
+  - esbuild
   - sharp
   - unrs-resolver
