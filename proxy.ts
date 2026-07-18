@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/utils/auth';
+import { getSessionCookie } from 'better-auth/cookies';
 
-export async function proxy(request: NextRequest) {
-	const session = await auth.api.getSession({
-		headers: request.headers,
-	});
+export function proxy(request: NextRequest) {
+	// Optimistic cookie-existence check only — pages verify the session
+	// against the database via auth.api.getSession.
+	const sessionCookie = getSessionCookie(request);
 
-	if (!session) {
+	if (!sessionCookie) {
 		return NextResponse.redirect(new URL('/sign-in', request.url));
 	}
 
@@ -14,5 +14,7 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-	matcher: ['/'],
+	// Protect everything by default; only the sign-in page, Better Auth's own
+	// endpoints, and static assets are reachable without a session.
+	matcher: ['/((?!sign-in|api/auth|_next/static|_next/image|favicon.ico).*)'],
 };
