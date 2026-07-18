@@ -1,20 +1,16 @@
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
-import PlayerStats from '@/components/pages/player-stats';
+import SignIn from '@/components/pages/sign-in';
 import { auth } from '@/utils/auth';
 
-export default async function Home() {
+export default async function SignInPage() {
 	const session = await auth.api.getSession({
 		headers: await headers(),
 	});
 
-	if (!session) {
-		redirect('/sign-in');
+	if (session) {
+		redirect('/');
 	}
 
-	return (
-		<div>
-			<PlayerStats />
-		</div>
-	);
+	return <SignIn />;
 }
