@@ -15,12 +15,25 @@ Requirements:
 ```bash
 corepack enable
 pnpm install --frozen-lockfile
-cp .env.local.example .env.local
+cp .env.example .env.local
 pnpm db:local:up
 pnpm dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
+
+Generate a unique `BETTER_AUTH_SECRET` in `.env.local` before enabling auth:
+
+```bash
+openssl rand -base64 32
+```
+
+Docker Compose deployments read `.env` instead. Create it from the same template,
+then replace the example credentials, auth secret, host, and public HTTPS auth URL:
+
+```bash
+cp .env.example .env
+```
 
 ### Database
 
