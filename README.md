@@ -1,36 +1,56 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DCC One Shot
 
-## Getting Started
+## Local development
 
-First, run the development server:
+Run Next.js directly on your workstation for fast refresh and use Docker only for the local PostgreSQL database.
+
+### First-time setup
+
+Requirements:
+
+- Node.js 22
+- Corepack
+- Docker with the Compose plugin
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+corepack enable
+pnpm install --frozen-lockfile
+cp .env.local.example .env.local
+pnpm db:local:up
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Database
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+# Start PostgreSQL and wait until it is healthy
+pnpm db:local:up
 
-## Learn More
+# Follow PostgreSQL logs
+pnpm db:local:logs
 
-To learn more about Next.js, take a look at the following resources:
+# Generate a migration after changing db/schema
+pnpm db:generate
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Apply committed migrations using the local environment
+node --env-file=.env.local --import tsx db/migrate.ts
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# Stop PostgreSQL without deleting its data
+pnpm db:local:down
+```
 
-## Deploy on Vercel
+The local database persists in the `postgres_data_local` Docker volume.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Checks before pushing
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+# ESLint, TypeScript, and a production Next.js build
+pnpm verify
+
+# Optional: verify the production Docker image
+pnpm docker:check
+```
+
+Use `pnpm docker:check` when application dependencies or Docker-related files change. Jenkins repeats the required CI checks and deploys merged changes from `develop` and `main` to the homeserver.
