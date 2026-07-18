@@ -3,3 +3,5 @@ export {};
 // Export everything from each schema file:
 // export * from './users';
 // export * from './players';
+//
+export * from './auth';
