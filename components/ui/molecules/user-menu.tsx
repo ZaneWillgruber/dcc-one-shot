@@ -29,7 +29,7 @@ export function UserMenu({
 				aria-label="Crawler menu"
 				className="cursor-pointer transition-opacity hover:opacity-80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
 			>
-				<Avatar name={name} image={image} />
+				<Avatar name={name} image={image} preload />
 			</Menu.Trigger>
 			<Menu.Portal>
 				<Menu.Positioner sideOffset={8} align="end">

@@ -14,7 +14,7 @@ export function SiteHeader({
 		<header className="border-b border-card-divider bg-card/50">
 			<div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-6 py-4">
 				<p className="font-sans text-sm font-black uppercase tracking-[0.3em] text-foreground">
-					<span className="text-accent">◆</span> DCC One Shot
+					<span className="text-accent">◆</span> DCC Virtual Table Top
 				</p>
 				<div className="flex items-center gap-4">
 					<ThemeSwitch />

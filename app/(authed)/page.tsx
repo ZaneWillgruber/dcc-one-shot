@@ -64,11 +64,6 @@ export default async function HomePage() {
 	const { user } = session;
 
 	return (
-		<Home
-			name={user.name}
-			email={user.email}
-			image={user.image}
-			crawls={await getCrawlsForUser(user.id)}
-		/>
+		<Home name={user.name} crawls={await getCrawlsForUser(user.id)} />
 	);
 }
