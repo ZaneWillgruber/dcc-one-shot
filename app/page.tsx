@@ -1,40 +1,56 @@
+import { eq } from 'drizzle-orm';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import Home from '@/components/pages/home';
-import { GameSession } from '@/types/session-types';
+import { db } from '@/db';
+import { crawls, players } from '@/db/schema';
+import { Crawl } from '@/types/crawl-types';
 import { auth } from '@/utils/auth';
 
-// Placeholder until game sessions live in the database — replace with a
-// query for the sessions this user belongs to.
-const mockSessions: GameSession[] = [
-	{
-		id: '1',
-		name: 'The Princess Posse',
-		status: 'active',
-		role: 'crawler',
-		floor: 3,
-		partySize: 5,
-		schedule: 'Fri, 7:00 PM',
-	},
-	{
-		id: '2',
-		name: 'Goblin Gauntlet',
-		status: 'upcoming',
-		role: 'dm',
-		floor: 1,
-		partySize: 4,
-		schedule: 'Jul 26, 6:30 PM',
-	},
-	{
-		id: '3',
-		name: 'Meadow Lark Massacre',
-		status: 'completed',
-		role: 'crawler',
-		floor: 2,
-		partySize: 6,
-		schedule: 'Last played Jun 30',
-	},
-];
+type CrawlRow = typeof crawls.$inferSelect & {
+	players: (typeof players.$inferSelect)[];
+};
+
+const scheduleFormat = new Intl.DateTimeFormat('en-US', {
+	month: 'short',
+	day: 'numeric',
+	hour: 'numeric',
+	minute: '2-digit',
+});
+
+function toCrawl(row: CrawlRow, userId: string): Crawl {
+	return {
+		id: row.id,
+		name: row.name,
+		status: row.startsAt > new Date() ? 'upcoming' : 'active',
+		role: row.ownerId === userId ? 'dm' : 'crawler',
+		floor: row.floor,
+		partySize: row.players.length,
+		schedule: scheduleFormat.format(row.startsAt),
+	};
+}
+
+async function getCrawlsForUser(userId: string): Promise<Crawl[]> {
+	const [owned, memberships] = await Promise.all([
+		db.query.crawls.findMany({
+			where: eq(crawls.ownerId, userId),
+			with: { players: true },
+		}),
+		db.query.players.findMany({
+			where: eq(players.userId, userId),
+			with: { crawl: { with: { players: true } } },
+		}),
+	]);
+
+	const byId = new Map<string, CrawlRow>();
+	for (const row of [...owned, ...memberships.map((m) => m.crawl)]) {
+		byId.set(row.id, row);
+	}
+
+	return [...byId.values()]
+		.sort((a, b) => a.startsAt.getTime() - b.startsAt.getTime())
+		.map((row) => toCrawl(row, userId));
+}
 
 export default async function HomePage() {
 	const session = await auth.api.getSession({
@@ -52,7 +68,7 @@ export default async function HomePage() {
 			name={user.name}
 			email={user.email}
 			image={user.image}
-			sessions={mockSessions}
+			crawls={await getCrawlsForUser(user.id)}
 		/>
 	);
 }

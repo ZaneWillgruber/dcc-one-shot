@@ -1,21 +1,22 @@
-import { DoorOpen, Plus } from 'lucide-react';
+import { DoorOpen } from 'lucide-react';
 import { Button } from '@/components/ui/atoms/button';
 import { Panel } from '@/components/ui/atoms/panel';
 import { Separator } from '@/components/ui/atoms/separator';
-import { SessionCard } from '@/components/ui/molecules/session-card';
+import { CrawlCard } from '@/components/ui/molecules/crawl-card';
+import { NewCrawlDialog } from '@/components/ui/organisms/new-crawl-dialog';
 import { SiteHeader } from '@/components/ui/organisms/site-header';
-import { GameSession } from '@/types/session-types';
+import { Crawl } from '@/types/crawl-types';
 
 interface HomeProps {
 	name: string;
 	email: string;
 	image?: string | null;
-	sessions: GameSession[];
+	crawls: Crawl[];
 }
 
-export default function Home({ name, email, image, sessions }: HomeProps) {
+export default function Home({ name, email, image, crawls }: HomeProps) {
 	const firstName = name.split(' ')[0];
-	const activeCount = sessions.filter((s) => s.status !== 'completed').length;
+	const activeCount = crawls.filter((c) => c.status !== 'completed').length;
 
 	return (
 		<div className="min-h-screen bg-background">
@@ -36,10 +37,7 @@ export default function Home({ name, email, image, sessions }: HomeProps) {
 							<DoorOpen className="size-3.5" />
 							Join
 						</Button>
-						<Button className="px-3 py-2 text-xs">
-							<Plus className="size-3.5" />
-							New Crawl
-						</Button>
+						<NewCrawlDialog />
 					</div>
 				</div>
 
@@ -50,10 +48,10 @@ export default function Home({ name, email, image, sessions }: HomeProps) {
 					<Separator className="flex-1" />
 				</div>
 
-				{sessions.length > 0 ? (
+				{crawls.length > 0 ? (
 					<div className="mt-4 flex flex-col gap-4">
-						{sessions.map((session) => (
-							<SessionCard key={session.id} session={session} />
+						{crawls.map((crawl) => (
+							<CrawlCard key={crawl.id} crawl={crawl} />
 						))}
 					</div>
 				) : (
