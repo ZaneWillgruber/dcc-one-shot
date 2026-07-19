@@ -1,5 +1,8 @@
 'use client';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { usePlayerContext } from '@/contexts/player-context';
+import { authClient } from '@/utils/auth-client';
 import ThemeToggle from '../molecules/theme-toggle';
 import { Abilities } from '../molecules/abilities';
 import { PlayerInfoCard } from '../molecules/player-info-card';
@@ -14,6 +17,21 @@ import { ItemPopup } from '../molecules/item-popup';
 
 export default function PlayerStats() {
 	const { player } = usePlayerContext();
+	const router = useRouter();
+	const [isSigningOut, setIsSigningOut] = useState(false);
+
+	async function signOut() {
+		setIsSigningOut(true);
+		const { error } = await authClient.signOut();
+
+		if (error) {
+			setIsSigningOut(false);
+			return;
+		}
+
+		router.replace('/sign-in');
+		router.refresh();
+	}
 
 	return (
 		<div className="h-screen bg-background p-8 flex justify-center overflow-hidden">
@@ -28,7 +46,17 @@ export default function PlayerStats() {
 							Player Stats
 						</h1>
 					</div>
-					<ThemeToggle />
+					<div className="flex items-center gap-3">
+						<button
+							type="button"
+							disabled={isSigningOut}
+							onClick={signOut}
+							className="border border-accent/50 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:cursor-not-allowed disabled:opacity-50"
+						>
+							{isSigningOut ? 'Signing out…' : 'Log out'}
+						</button>
+						<ThemeToggle />
+					</div>
 				</div>
 				<div className="grid grid-cols-[.25fr_.75fr] gap-2 flex-1 min-h-0 overflow-hidden">
 					<Stack className="min-w-0">

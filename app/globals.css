@@ -38,6 +38,19 @@
 	--font-stat: var(--font-rajdhani);
 }
 
+@theme {
+	--animate-scan: scan 1.4s ease-in-out infinite;
+
+	@keyframes scan {
+		0% {
+			translate: -100% 0;
+		}
+		100% {
+			translate: 400% 0;
+		}
+	}
+}
+
 body {
 	background: var(--background);
 	color: var(--foreground);
